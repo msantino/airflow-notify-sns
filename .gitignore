@@ -1,0 +1,17 @@
+.idea
+.vscode
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+pip-log.txt
+virtualenv
+venv
+config.py
+/build
+/dist
+/results
+.pytest_cache
+.mypy_cache
+.coverage
+publish.sh

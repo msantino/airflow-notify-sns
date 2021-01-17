@@ -1,0 +1,2 @@
+apache-airflow>=1.10.0,<2.0
+apache-airflow-backport-providers-amazon
