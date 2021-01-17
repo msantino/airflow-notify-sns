@@ -1,6 +1,8 @@
 import logging
 from datetime import datetime
 
+LOGGING = logging.getLogger(__name__)
+
 from airflow.models import Variable
 from airflow.providers.amazon.aws.hooks.base_aws import AwsBaseHook
 
@@ -19,7 +21,7 @@ def airflow_notify_sns(context, **kwargs):
 
     # Make variable required
     if sns_topic_arn is None:
-        logging.error("Variable [airflow_notify_sns_arn] not found in Airflow")
+        LOGGING.error("Variable [airflow_notify_sns_arn] not found in Airflow")
         return None
 
 
@@ -28,34 +30,34 @@ def airflow_notify_sns(context, **kwargs):
     message = get_message_text(context)
 
     # Sending message to topic
-    logging.info(f"Error message to send: {message}")
-    logging.info(f"Sending error message to SNS Topic ARN [{sns_topic_arn}]")
+    LOGGING.info(f"Error message to send: {message}")
+    LOGGING.info(f"Sending error message to SNS Topic ARN [{sns_topic_arn}]")
     try:
         response = sns_client.get_conn().publish(
             TopicArn=sns_topic_arn,
             Subject=subject,
             Message=message
         )
-        logging.info("Message successfully sent do SNS Topic")
+        LOGGING.info("Message successfully sent do SNS Topic")
         return response
     except Exception as ex:
-        logging.error(f"Error sending message to SNS: [{ex}]")
+        LOGGING.error(f"Error sending message to SNS: [{ex}]")
         return None
 
     return None
 
 def get_message_text(context):
     return """Airflow task execution failed. 
-        *Time*: {time}  
-        *Task*: {task}  
-        *Dag*: {dag} 
-        *Execution Time*: {exec_date}  
-        *Log Url*: {log_url} 
-        """.format(
-            time=datetime.now(),
-            task=context.get('task_instance').task_id,
-            dag=context.get('task_instance').dag_id,
-            ti=context.get('task_instance'),
-            exec_date=context.get('execution_date'),
-            log_url=context.get('task_instance').log_url,
-        )
+    *Time*: {time}  
+    *Task*: {task}  
+    *Dag*: {dag} 
+    *Execution Time*: {exec_date}  
+    *Log Url*: {log_url} 
+    """.format(
+        time=datetime.now(),
+        task=context.get('task_instance').task_id,
+        dag=context.get('task_instance').dag_id,
+        ti=context.get('task_instance'),
+        exec_date=context.get('execution_date'),
+        log_url=context.get('task_instance').log_url,
+    )

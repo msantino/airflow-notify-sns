@@ -9,7 +9,7 @@ ext_modules = []
 
 setup(
     name='airflow-notify-sns',  
-    version='0.0.1',
+    version='0.0.2',
     author="Marcelo Santino",
     author_email="marcelo@santino.dev",
     description="Publish Airflow notification errors to SNS Topic",

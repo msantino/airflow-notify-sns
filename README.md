@@ -30,7 +30,7 @@ from airflow_notify_sns import airflow_notify_sns
 
 # Dag Definition
 dag = DAG(
-    dag_id='',
+    dag_id='test_dag',
     default_args={
         'owner': 'airflow',
         'depends_on_past': False,
@@ -38,17 +38,16 @@ dag = DAG(
         'retries': 3,
         'retry_delay': timedelta(minutes=5)
     },
-    schedule_interval="airflow_notify_sns",
+    schedule_interval="@daily",
     dagrun_timeout=timedelta(minutes=60),
-    sla_miss_callback=airflow_notify_sns,
-    on_failure_callback=airflow_notify_sns
+    sla_miss_callback=airflow_notify_sns
 )
 
 # Add your tasks here
 t = BashOperator(
     dag=dag,
     task_id='test_env',
-    bash_command='/tmp/test.sh ',
+    bash_command='/tmp/test.sh',
     env={'EXECUTION_DATE': '{{ ds }}'},
     on_failure_callback=airflow_notify_sns
 )
